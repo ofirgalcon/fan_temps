@@ -1,4 +1,4 @@
-#!/usr/local/munkireport/munkireport-python2
+#!/usr/local/bin/python3
 # fans/temps script by tuxudo for MunkiReport
 
 import subprocess
@@ -8,6 +8,7 @@ import sys
 import string
 import re
 import json
+# import importlib
 
 def get_smc_path():
     
@@ -30,9 +31,9 @@ def get_smc_results():
     (output, unused_error) = proc.communicate()
     
     # Get machine model
-    model = subprocess.check_output(['/usr/sbin/sysctl', '-n','hw.model'], shell=False, bufsize=-1)
+    model = subprocess.check_output(['/usr/sbin/sysctl', '-n','hw.model'], shell=False, bufsize=-1).decode()
 
-    for item in output.split("\n"):
+    for item in output.decode().split("\n"):
         
         # Some key values are offset differently
         if " ]  " in item:
@@ -285,7 +286,7 @@ def get_smc_results():
             smcinfo_json[item.split(' ')[2].strip()] = item.split(' ')[split_value].strip()
         elif item.startswith( '  P', 0, 3 ) or item.startswith( '  V', 0, 3 ) or item.startswith( '  I', 0, 3 ): # Watts, Volts, Amps
             # Calculate proper value
-            if item.split(' ')[split_value].strip() is not "" and "bytes" not in item.split(' ')[split_value].strip() and float(item.split(' ')[split_value].strip()) > 1000:
+            if item.split(' ')[split_value].strip() != "" and "bytes" not in item.split(' ')[split_value].strip() and float(item.split(' ')[split_value].strip()) > 1000:
                 smcinfo_json[item.split(' ')[2].strip()] = str(float(item.split(' ')[split_value].strip())/1000)
             elif item.split(' ')[split_value].strip() != "254.000":
                 smcinfo_json[item.split(' ')[2].strip()] = item.split(' ')[split_value].strip()
@@ -315,7 +316,7 @@ def get_smc_results():
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (output, unused_error) = proc.communicate()
 
-        output = output.replace(':\n', ':')
+        output = output.decode().replace(':\n', ':')
         
         # Process each line looking for the fan name
         for item in output.split("\n"):
@@ -359,28 +360,16 @@ def main():
     if os.path.isfile(os.path.dirname(os.path.realpath(__file__))+'/fan_temps.sh'):
         os.remove(os.path.dirname(os.path.realpath(__file__))+'/fan_temps.sh')
 
-    # Create cache dir if it does not exist
-    cachedir = '%s/cache' % os.path.dirname(os.path.realpath(__file__))
-    if not os.path.exists(cachedir):
-        os.makedirs(cachedir)
-
-    # Skip manual check
-    if len(sys.argv) > 1:
-        if sys.argv[1] == 'manualcheck':
-            print 'Manual check: skipping'
-            exit(0)
-
-    # Set the encoding
-    reload(sys)
-    sys.setdefaultencoding('utf8')
-
     # Get results
     info = get_smc_results()
 
     # Write smc results to cache file
+    cachedir = '%s/cache' % os.path.dirname(os.path.realpath(__file__))
     output_plist = os.path.join(cachedir, 'fan_temps.plist')
-    plistlib.writePlist(info, output_plist)
-    #print plistlib.writePlistToString(info)
-
+    try:
+        plistlib.writePlist(info, output_plist)
+    except:
+        with open(output_plist, 'wb') as fp:
+            plistlib.dump(info, fp, fmt=plistlib.FMT_XML)
 if __name__ == "__main__":
     main()
