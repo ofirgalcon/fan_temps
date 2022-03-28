@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/local/munki/munki-python
 # fans/temps script by tuxudo for MunkiReport
 
 import subprocess
@@ -8,7 +8,6 @@ import sys
 import string
 import re
 import json
-# import importlib
 
 def get_smc_path():
     
