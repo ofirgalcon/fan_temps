@@ -12,11 +12,19 @@ import json
 
 def get_smc_path():
     
-    if os.path.isfile('/usr/local/munki/smc'):
-        return '/usr/local/munki/smc'
-    
-    if os.path.isfile('/usr/local/munkireport/smc'):
-        return '/usr/local/munkireport/smc'
+    if getDarwinVersion() < 17:
+        # Sierra (Darwin 16) and older use the legacy smc binary
+        if os.path.isfile('/usr/local/munki/smc_legacy'):
+            return '/usr/local/munki/smc_legacy'
+
+        if os.path.isfile('/usr/local/munkireport/smc_legacy'):
+            return '/usr/local/munkireport/smc_legacy'
+    else:
+        if os.path.isfile('/usr/local/munki/smc'):
+            return '/usr/local/munki/smc'
+
+        if os.path.isfile('/usr/local/munkireport/smc'):
+            return '/usr/local/munkireport/smc'
     
 def get_smc_results():
     
@@ -170,7 +178,8 @@ def get_smc_results():
             smcinfo_json['CHBV'] = str(float(item.split(' ')[split_value].strip())/1000)
             
             
-            
+        elif ("BRSC" in item or "B0CT" in item or "B0AV" in item) and "arm" in os.uname()[3].lower():
+            pass
             
         elif "B0TF" in item and "65535" not in item:
             smcinfo_json['B0TF'] = re.sub(r'\(.+?\)', '', re.sub(r'\[.+?\]', '', item.replace('B0TF', ''))).strip()
@@ -352,6 +361,14 @@ def get_smc_results():
     smcinfo['json_info'] = json.dumps(smcinfo_json)
 
     return smcinfo
+
+def getDarwinVersion():
+    """Returns the Darwin version."""
+    # Catalina -> 10.15.7 -> 19.6.0 -> 19
+    # os_version_tuple = platform.mac_ver()[0].split('.')
+    # return int(os_version_tuple[1])
+    darwin_version_tuple = platform.release().split('.')
+    return int(darwin_version_tuple[0])
     
 def main():
     

@@ -12,13 +12,13 @@ if [ ! -f "${MUNKIPATH}smc" ]; then
 fi
 
 if [ "${?}" != 0 ]; then
-	echo "Failed to download all required components!"
-	rm -f "${MUNKIPATH}preflight.d/fan_temps"
-	rm -f "${MUNKIPATH}smc.zip"
-	exit 1
+    echo "Failed to download all required components!"
+    rm -f "${MUNKIPATH}preflight.d/fan_temps"
+    rm -f "${MUNKIPATH}smc.zip"
+    exit 1
 else
 
-    # Delete smckit
+    # Delete smckit, we don't use that anymore
     if [ -f "${MUNKIPATH}smckit" ]; then
         rm -f "${MUNKIPATH}smckit"
     fi
@@ -28,20 +28,21 @@ else
         rm -f "${MUNKIPATH}preflight.d/fan_temps.sh"
     fi
 
-	# Unzip the executable only if it exists
-	if [ -f "${MUNKIPATH}smc.zip" ]; then
-	     unzip  -oqq "${MUNKIPATH}smc.zip" -d "${MUNKIPATH}"
-	fi
+    # Unzip the executable only if it exists
+    if [ -f "${MUNKIPATH}smc.zip" ]; then
+        unzip -oqq "${MUNKIPATH}smc.zip" -d "${MUNKIPATH}"
+    fi
 
-	# Make executable
-	chmod a+x "${MUNKIPATH}preflight.d/fan_temps"
-	chmod a+x "${MUNKIPATH}smc"
-    
-	# Clean up smc.zip only if it exists
-	if [ -f "${MUNKIPATH}smc.zip" ]; then
-	     rm -f "${MUNKIPATH}smc.zip"
-	fi
-    
-	# Set preference to include this file in the preflight check
-	setreportpref "fan_temps" "${CACHEPATH}fan_temps.plist"
+    # Make executable
+    chmod a+x "${MUNKIPATH}preflight.d/fan_temps"
+    chmod a+x "${MUNKIPATH}smc"
+    chmod a+x "${MUNKIPATH}smc_legacy"
+
+    # Clean up smc.zip only if it exists
+    if [ -f "${MUNKIPATH}smc.zip" ]; then
+         rm -f "${MUNKIPATH}smc.zip"
+    fi
+
+    # Set preference to include this file in the preflight check
+    setreportpref "fan_temps" "${CACHEPATH}fan_temps.plist"
 fi
