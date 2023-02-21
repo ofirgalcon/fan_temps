@@ -1,0 +1,38 @@
+client_tabs:
+    amps-tab:
+        view: amps_tab
+        i18n: fan_temps.tabtitle_amps
+    fans-tab:
+        view: fans_tab
+        i18n: fan_temps.tabtitle_fans
+    smc-tab:
+        view: smc_tab
+        i18n: fan_temps.tabtitle_smc
+    temps-tab:
+        view: temps_tab
+        i18n: fan_temps.tabtitle_temps
+listings:
+    fans:
+        view: fans_listing
+        i18n: fan_temps.tabtitle_fans
+    smc:
+        view: smc_listing
+        i18n: fan_temps.tabtitle_smc
+    temps:
+        view: temps_listing
+        i18n: fan_temps.tabtitle_temps
+reports:
+    fan_temps_report:
+        view: fan_temps_report
+        i18n: fan_temps.reporttitle_more
+widgets:
+    fan_temps_bad_fans:
+        view: fan_temps_bad_fans_widget
+    fan_temps_fans_set:
+        view: fan_temps_fans_set_widget
+    fan_temps_odd_inserted:
+        view: fan_temps_odd_inserted_widget
+    fan_temps_cpu_hot:
+        view: fan_temps_cpu_hot_widget
+    fan_temps_gpu_overtemp:
+        view: fan_temps_gpu_overtemp_widget
