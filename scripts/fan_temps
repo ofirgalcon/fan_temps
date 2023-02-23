@@ -9,6 +9,7 @@ import sys
 import string
 import re
 import json
+import platform
 
 def get_smc_path():
     
