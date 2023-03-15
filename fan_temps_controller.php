@@ -146,7 +146,11 @@ class Fan_temps_controller extends Module_controller
         $fan_temps_tab = $queryobj->query($sql);
         
         // Extract just the JSON string and make it an object
-        $data_json = json_decode(json_decode(json_encode($fan_temps_tab[0]),true)['json_info']);
+        if (array_key_exists(0, $fan_temps_tab) && !is_null($fan_temps_tab[0]->json_info)){
+            $data_json = json_decode(json_decode(json_encode($fan_temps_tab[0]),true)['json_info']);
+        } else {
+            $data_json = (object) array();
+        }
 
         if(!is_null($data_json)){
             // Add the temperature type to the object for the client tab
