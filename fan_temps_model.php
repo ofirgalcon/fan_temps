@@ -7,7 +7,7 @@ class Fan_temps_model extends \Model {
     function __construct($serial='')
     {
         parent::__construct('id', 'fan_temps'); // Primary key, tablename
-        $this->rs['id'] = 0;
+        $this->rs['id'] = "";
         $this->rs['serial_number'] = $serial;
         $this->rs['f0ac'] = 0;
         $this->rs['f1ac'] = 0;
