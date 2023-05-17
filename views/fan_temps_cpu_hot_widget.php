@@ -3,7 +3,7 @@
         <div id="fan_temps_cpu_hot-widget" class="panel-heading" data-container="body">
             <h3 class="panel-title"><i class="fa fa-free-code-camp "></i> 
                 <span data-i18n="fan_temps.SPHT"></span>
-                <list-link data-url="/show/listing/fan_temps/temps"></list-link>
+                <list-link data-url="/show/listing/fan_temps/smc"></list-link>
             </h3>
         </div>
         <div class="panel-body text-center"></div>
@@ -20,7 +20,7 @@ $(document).on('appUpdate', function(e, lang) {
         }
 
         var panel = $('#fan_temps_cpu_hot-widget div.panel-body'),
-        baseUrl = appUrl + '/show/listing/fan_temps/temps/';
+        baseUrl = appUrl + '/show/listing/fan_temps/smc/';
         panel.empty();
         // Set blocks, disable if zero
         if(data.yes != "0"){

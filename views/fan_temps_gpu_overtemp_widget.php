@@ -3,7 +3,7 @@
         <div id="fan_temps_gpu_overtemp-widget" class="panel-heading" data-container="body">
             <h3 class="panel-title"><i class="fa fa-fire"></i> 
                 <span data-i18n="fan_temps.SGHT"></span>
-                <list-link data-url="/show/listing/fan_temps/temps"></list-link>
+                <list-link data-url="/show/listing/fan_temps/smc"></list-link>
             </h3>
         </div>
         <div class="panel-body text-center"></div>
@@ -20,7 +20,7 @@ $(document).on('appUpdate', function(e, lang) {
         }
 
         var panel = $('#fan_temps_gpu_overtemp-widget div.panel-body'),
-        baseUrl = appUrl + '/show/listing/fan_temps/temps/';
+        baseUrl = appUrl + '/show/listing/fan_temps/smc/';
         panel.empty();
         // Set blocks, disable if zero
         if(data.yes != "0"){
