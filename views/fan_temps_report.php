@@ -4,15 +4,15 @@
 	)
 )); ?>
 
-<div class="container">
+<div class="container-fluid">
     
-  <div class="row">
+  <div class="row pt-4">
     <?php $widget->view($this, 'fan_temps_cpu_hot'); ?>
     <?php $widget->view($this, 'fan_temps_gpu_overtemp'); ?>
     <?php $widget->view($this, 'fan_temps_odd_inserted'); ?>
   </div> <!-- /row -->
       
-  <div class="row">
+  <div class="row pt-4">
     <?php $widget->view($this, 'fan_temps_bad_fans'); ?>
     <?php $widget->view($this, 'fan_temps_fans_set'); ?>
   </div> <!-- /row -->
