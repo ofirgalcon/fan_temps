@@ -52,3 +52,4 @@ Table Schema
 * sph0 (integer) - Processor Hot Count Since Boot
 * msdi (boolean) - Optical Disc Inserted
 * json_info (medium text) - JSON string containing SMC keys and values
+* keyboard_language (string) - MacBook keyboard language

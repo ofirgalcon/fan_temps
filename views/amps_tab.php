@@ -5,7 +5,7 @@
 
 <script>
 $(document).on('appReady', function(){
-	$.getJSON(appUrl + '/module/fan_temps/get_tab_data/' + serialNumber, function(data){
+   $.getJSON(appUrl + '/module/fan_temps/get_tab_data/' + serialNumber, function(data){
         if( ! data ){
             // Change loading message to no data
             $('#apms-msg').text(i18n.t('no_data'));
@@ -14,13 +14,13 @@ $(document).on('appReady', function(){
             $('#smc-msg').text(i18n.t('no_data'));
             
         } else {
-            
+
             // Hide loading/no data message
             $('#apms-msg').text('');
             $('#fans-msg').text('');
             $('#temps-msg').text('');
             $('#smc-msg').text('');
-            
+
             var skipThese = ['TEMPERATURE_UNIT'];
             var amps_rows = ''
             var fan_rows = ''
@@ -35,26 +35,25 @@ $(document).on('appReady', function(){
                 if(skipThese.indexOf(prop) == -1){
                     if (data[prop] == null){
                        // Do nothing for nulls to blank them
-                    
+
                     // Create fan speed table section
                     } else if (prop.startsWith("F") && prop.endsWith("Mn")){
-					   fan_rows = fan_rows + '<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;'+i18n.t('fan_temps.fanmin')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';
+                  fan_rows = fan_rows + '<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;'+i18n.t('fan_temps.fanmin')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';
                     } else if (prop.startsWith("F") && prop.endsWith("Mx")){
-					   fan_rows = fan_rows + '<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;'+i18n.t('fan_temps.fanmax')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';
-                        
+                  fan_rows = fan_rows + '<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;'+i18n.t('fan_temps.fanmax')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';
+
                     } else if (prop.startsWith("F") && prop.endsWith("Ac")){
-                        
+
                         if (data[(prop.replace('Ac', 'ID'))]) {
                            fan_rows = fan_rows + '<tr><th>'+data[(prop.replace('Ac', 'ID'))]+' '+i18n.t('fan_temps.fan')+' '+i18n.t('fan_temps.current_speed')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';
-                            
+
                         } else {
                            fan_rows = fan_rows + '<tr><th>'+i18n.t('fan_temps.fan')+' '+(prop.replace('Ac', '').replace('F', ''))+' '+i18n.t('fan_temps.current_speed')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';
                         }
-                        
+
                     } else if (i18n.t('fan_temps.'+local_prop) == 'fan_temps.'+local_prop) {
                        // Hide rows that do not have a localization
-//                        alert(prop)
-                        
+                       // alert(prop)
                     // Start of amps, volts, watts rows
                     } else if (prop.startsWith("I") || prop == "B0AC" || prop == "B0RM" || prop == "B0FC" || prop == "CHBI" || prop == "D0IR" || prop == "D1IR" || prop == "D2IR" || prop == "D3IR" || prop == "D4IR"){ 
                        amps_rows = amps_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' Amps</td></tr>';
@@ -67,164 +66,167 @@ $(document).on('appReady', function(){
 
                     // Temperature rows
                     } else if (prop.startsWith("T")){
-					   temperature_f = parseFloat(((data[prop] * 9/5 ) + 32 ).toFixed(2));
-					   if (data['TEMPERATURE_UNIT'] == "F"){
-					        temps_rows = temps_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+data[prop]+'°C">'+temperature_f+'°F</span></td></tr>';
-					   } else {
-					        temps_rows = temps_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+temperature_f+'°F">'+data[prop]+'°C</span></td></tr>';
-					   }
-                        
+                  temperature_f = parseFloat(((data[prop] * 9/5 ) + 32 ).toFixed(2));
+                  if (data['TEMPERATURE_UNIT'] == "F"){
+                       temps_rows = temps_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+data[prop]+'°C">'+temperature_f+'°F</span></td></tr>';
+                  } else {
+                       temps_rows = temps_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+temperature_f+'°F">'+data[prop]+'°C</span></td></tr>';
+                  }
+
                     // Start of fan rows
                     } else if (prop == "FNFD" && data[prop] > "0"){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('yes')+'</td></tr>';
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('yes')+'</td></tr>';
                     } else if (prop == "FNFD" && data[prop] == "0"){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('no')+'</td></tr>';
-                        
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('no')+'</td></tr>';
+
                     } else if (prop == "MSSF" && data[prop] == "1"){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('yes')+'</td></tr>';
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('yes')+'</td></tr>';
                     } else if (prop == "MSSF" && data[prop] == "0"){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('no')+'</td></tr>';
-                                      
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+i18n.t('no')+'</td></tr>';
+
                     } else if (prop == "FNum"){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+data[prop]+'</td></tr>';
-                        
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</th><td>'+data[prop]+'</td></tr>';
+
                     } else if (prop == "dBAH" || prop == "dBAT"){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop+'_short')+'</th><td>'+data[prop]+' dBDA</td></tr>';
-                        
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop+'_short')+'</th><td>'+data[prop]+' dBDA</td></tr>';
+
                     } else if (prop.startsWith("dBA")){
-					   fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.fan')+' '+(prop.replace('dBA', ''))+" "+i18n.t('fan_temps.noise')+'</th><td>'+data[prop]+' dBA</td></tr>';
-               
+                  fan_rows = fan_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.fan')+' '+(prop.replace('dBA', ''))+" "+i18n.t('fan_temps.noise')+'</th><td>'+data[prop]+' dBA</td></tr>';
+
                     // Start of SMC rows
                     } else if ((prop == "AUPO" || prop == "MSTM" || prop == "SPHT" || prop == "SGHT" || prop == "BBAD" || prop == "BBIN") && parseInt(data[prop]) == "1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('yes')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('yes')+'</td></tr>';
                     } else if ((prop == "AUPO" || prop == "MSTM" || prop == "SPHT" || prop == "SGHT" || prop == "BBAD" || prop == "BBIN") && parseInt(data[prop]) == "0"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('no')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('no')+'</td></tr>';
+
                     } else if (prop == "MSDI" && parseInt(data[prop]) == "1"){
-					   smc_rows = smc_rows + '<tr><th>'+i18n.t('fan_temps.'+prop)+'</th><td>'+i18n.t('yes')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th>'+i18n.t('fan_temps.'+prop)+'</th><td>'+i18n.t('yes')+'</td></tr>';
                     } else if (prop == "MSDI" && parseInt(data[prop]) == "0"){
-					   smc_rows = smc_rows + '<tr><th>'+i18n.t('fan_temps.'+prop)+'</th><td>'+i18n.t('no')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th>'+i18n.t('fan_temps.'+prop)+'</th><td>'+i18n.t('no')+'</td></tr>';
+
                     } else if (prop == "LSOF" && parseInt(data[prop]) == "1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('off')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('off')+'</td></tr>';
                     } else if (prop == "LSOF" && parseInt(data[prop]) == "0"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('on')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('on')+'</td></tr>';
+
                     } else if (prop == "MSLD" && parseInt(data[prop]) == "1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.closed')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.closed')+'</td></tr>';
                     } else if (prop == "MSLD" && parseInt(data[prop]) == "0"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.open')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.open')+'</td></tr>';
+
                     } else if (prop == "HDBS" && parseInt(data[prop]) == "1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('enabled')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('enabled')+'</td></tr>';
                     } else if (prop == "HDBS" && parseInt(data[prop]) == "0"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('disabled')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('disabled')+'</td></tr>';
+
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "5"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown5')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown5')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "3"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown3')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown3')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "2"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown2')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown2')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown1')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown1')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "0"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown0')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown0')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_1')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_1')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-2"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_2')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_2')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-3"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_3')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_3')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-4"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_4')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_4')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-20"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_20')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_20')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-30"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_30')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_30')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-40"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_40')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_40')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-50"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_50')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_50')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-60"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_60')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_60')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-61"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_61')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_61')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-62"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_62')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_62')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-70"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_70')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_70')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-71"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_71')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_71')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-72"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_72')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_72')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-74"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_74')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_74')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-75"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_75')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_75')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-76"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_76')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_76')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-78"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_78')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_78')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-79"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_79')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_79')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-82"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_82')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_82')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-83"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_83')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_83')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-84"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_84')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_84')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-86"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_86')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_86')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-95"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_95')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_95')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-100"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_100')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_100')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-101"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_101')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_101')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-102"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_102')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_102')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-103"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_103')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_103')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-127"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_127')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_127')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-128"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_128')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown_128')+'</td></tr>';
+                    } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "-1234"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td> </td></tr>';
+
                     } else if(prop == "B0TF" && data[prop] == "65535"){
                         // Do nothing for this key if "empty"
-                        
+
                     } else if(prop == "B0TF" && data[prop] !== "65535"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' '+i18n.t('fan_temps.minutes')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' '+i18n.t('fan_temps.minutes')+'</td></tr>';
+
                     } else if (prop == "BRSC"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+'%</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+'%</td></tr>';
                     } else if (prop == "ALSL"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' lux</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' lux</td></tr>';
                     } else if (prop == "NATi"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' '+i18n.t('fan_temps.seconds')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' '+i18n.t('fan_temps.seconds')+'</td></tr>';
+
                     } else if (prop == "NATJ" && data[prop] == "0"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_0')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_0')+'</td></tr>';
                     } else if (prop == "NATJ" && data[prop] == "1"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_1')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_1')+'</td></tr>';
                     } else if (prop == "NATJ" && data[prop] == "2"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_2')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_2')+'</td></tr>';
                     } else if (prop == "NATJ" && data[prop] == "3"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_3')+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_3')+'</td></tr>';
                     } else if (prop == "NATJ" && data[prop] == "4"){
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_4')+'</td></tr>';
-                        
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('fan_temps.ninja_4')+'</td></tr>';
+
                     } else if (prop == "SGTT" || prop == "SCTg" || prop == "SGTg" || prop == "SHTg" || prop == "SLTg" || prop == "SLTp" || prop == "SOTg" || prop == "SpTg" || prop == "SLPT" || prop == "SLST" || prop == "SpPT" || prop == "SpST"){
-					   temperature_f = parseFloat(((data[prop] * 9/5 ) + 32 ).toFixed(2));
-					   if (data['TEMPERATURE_UNIT'] == "F"){
-					        smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+data[prop]+'°C">'+temperature_f+'°F</span></td></tr>';
-					   } else {
-					        smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+temperature_f+'°F">'+data[prop]+'°C</span></td></tr>';
-					   }
-                    
+
+                        temperature_f = parseFloat(((data[prop] * 9/5 ) + 32 ).toFixed(2));
+                        if (data['TEMPERATURE_UNIT'] == "F"){
+                             smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+data[prop]+'°C">'+temperature_f+'°F</span></td></tr>';
+                        } else {
+                             smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td><span title="'+temperature_f+'°F">'+data[prop]+'°C</span></td></tr>';
+                        }
+
                     } else {
-					   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+'</td></tr>';
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+'</td></tr>';
                     }
                 }
             }
@@ -273,7 +275,7 @@ $(document).on('appReady', function(){
                                 .append(watts_rows))))
                 sortTable_temps(watts_table);
             }
-            
+
             // Only show and sort smc table if data exists
             if ( smc_rows !== ""){
                 $('#smc-tab')
@@ -284,7 +286,7 @@ $(document).on('appReady', function(){
                                 .append(smc_rows))))
                 sortTable_temps(smc_table);
             }
-            
+
             // Only show and sort temps table if data exists
             if ( temps_rows !== ""){
                 $('#temps-tab')
@@ -295,7 +297,7 @@ $(document).on('appReady', function(){
                                 .append(temps_rows))))
                 sortTable_temps(temps_table);
             }
-            
+
             // Only show fan table if data exists, do not sort it
             if ( fan_rows !== ""){
                 $('#fans-tab')
@@ -306,10 +308,10 @@ $(document).on('appReady', function(){
                                 .append(fan_rows))))
             }
         } 
-	});
-    
-    
-    
+   });
+
+
+
     // Escape lower case letters to properly localize them
     function escape_lower_case(in_string){
         var out_string = in_string.replace(/[a-z]/g, function(match) {
@@ -317,7 +319,7 @@ $(document).on('appReady', function(){
         });
         return out_string
     }
-    
+
     // Function to sort tables
     function sortTable_temps(table) {
       var rows, switching, i, x, y, shouldSwitch;
