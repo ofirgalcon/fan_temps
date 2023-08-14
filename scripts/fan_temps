@@ -376,8 +376,8 @@ def getMacModel():
             plist = plistlib.readPlistFromString(output)
         except AttributeError as e:
             plist = plistlib.loads(output)
-        return plist[0]['_items'][0]["machine_name"] # MacBook Pro
-        # mac_id = plist[0]['_items'][0]["machine_model"] # MacBookPro16,3
+        # return plist[0]['_items'][0]["machine_name"] # MacBook Pro
+        return plist[0]['_items'][0]["machine_model"] # MacBookPro16,3
     except Exception:
         return ""
 
