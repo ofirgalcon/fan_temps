@@ -398,6 +398,74 @@ def getKeyboardLanuage():
     except Exception:
         return ""
 
+def get_as_properties(result):
+
+    # Gets info for Apple Silicon Macs
+    cmd = ['/usr/libexec/corebrightnessdiag', 'status-info']
+    proc = subprocess.Popen(cmd, shell=False, bufsize=-1, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (output, unused_error) = proc.communicate()
+
+    # The output is sometimes split
+    if b"Unable to dump a property list." in output:
+      output=output.decode("utf-8", errors="ignore").split("Unable to dump a property list.")[0].encode()
+
+    try:
+        plist = plistlib.readPlistFromString(output)
+    except AttributeError as e:
+        plist = plistlib.loads(output)
+
+    try:
+        # Because there can be multiple displays, we need to find the primary display
+        if plist["CBDisplayInfo"] and plist["CBDisplayInfo"][0] and plist["CBDisplayInfo"][0]["CBDisplayInfoDeviceID"]:
+            main_display=plist["CBDisplayInfo"][0]["CBDisplayInfoDeviceID"]
+
+            if plist["CBDisplays"]:
+                for display in plist["CBDisplays"]:
+                    # Look for the primary display by device ID
+                    if plist["CBDisplays"][display]["Display"] and plist["CBDisplays"][display]["Display"]["CBDisplayInfo"] and plist["CBDisplays"][display]["Display"]["CBDisplayInfo"]["CBDisplayInfoDeviceID"] and plist["CBDisplays"][display]["Display"]["CBDisplayInfo"]["CBDisplayInfoDeviceID"] == main_display:
+
+                        if plist["CBDisplays"][display]["AutoBrightness"] and plist["CBDisplays"][display]["AutoBrightness"]["AggregatedLux"]:
+                            aggregated_lux = int(plist["CBDisplays"][display]["AutoBrightness"]["AggregatedLux"])
+                            result.update({'alsl': aggregated_lux})
+
+                        # We found the display we're looking for
+                        break
+    except:
+        pass
+
+    try:
+        if (plist["CBClamshellState"] or plist["CBClamshellState"] == 0):
+            clamshell_state = to_bool(plist["CBClamshellState"])
+            result.update({'msld': clamshell_state}) # Clamshell state
+    except:
+        pass
+
+    try:
+        # Check if we have to inject the keys into the JSON string
+        if 'alsl' in result or 'msld' in result:
+
+            # Unpack the JSON
+            smcinfo_json = json.loads(result['json_info'])
+
+            if 'alsl' in result:
+                smcinfo_json.update({'ALSL': aggregated_lux})
+
+            if 'msld' in result:
+                smcinfo_json.update({'MSLD': clamshell_state})
+
+            # Repack JSON
+            result.update({'json_info': json.dumps(smcinfo_json)})
+    except:
+        pass
+
+    return result
+
+def to_bool(s):
+    if s == True:
+        return 1
+    else:
+        return 0
+
 def getDarwinVersion():
     """Returns the Darwin version."""
     # Catalina -> 10.15.7 -> 19.6.0 -> 19
@@ -415,6 +483,10 @@ def main():
 
     # Get results
     info = get_smc_results()
+
+    # Check if Apple Silicon Mac
+    if "arm" in os.uname()[3].lower():
+        info = get_as_properties(info)
 
     # Write smc results to cache file
     cachedir = '%s/cache' % os.path.dirname(os.path.realpath(__file__))
