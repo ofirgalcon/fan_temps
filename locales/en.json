@@ -12,6 +12,7 @@
     "amps": "Amps",
     "volts": "Volts",
     "watts": "Watts",
+    "idle_time": "Idle Time",
     "keyboard_language": "Keyboard Language",
     "sensorname": "Sensor Code",
     "fanid": "Fan ID",

@@ -3,7 +3,7 @@
 use CFPropertyList\CFPropertyList;
 
 class Fan_temps_model extends \Model {
-    
+
     function __construct($serial='')
     {
         parent::__construct('id', 'fan_temps'); // Primary key, tablename
@@ -80,6 +80,7 @@ class Fan_temps_model extends \Model {
         $this->rs['sph0'] = 0;
         $this->rs['json_info'] = "";
         $this->rs['keyboard_language'] = "";
+        $this->rs['idle_time'] = "";
 
         // Retrieve data for serial number
         if ($serial)
@@ -110,7 +111,7 @@ class Fan_temps_model extends \Model {
         $plist = $parser->toArray();
 
         // Process each of the items
-        foreach (array('f0ac', 'f1ac', 'f2ac', 'f3ac', 'f4ac', 'f5ac', 'f6ac', 'f7ac', 'f8ac', 'f0mn', 'f1mn', 'f2mn', 'f3mn', 'f4mn', 'f5mn', 'f6mn', 'f7mn', 'f8mn', 'f0mx', 'f1mx', 'f2mx', 'f3mx', 'f4mx', 'f5mx', 'f6mx', 'f7mx', 'f8mx', 'f0id', 'f1id', 'f2id', 'f3id', 'f4id', 'f5id', 'f6id', 'f7id', 'f8id', 'ta0p', 'tc0f', 'tc0d', 'tc0p', 'tb0t', 'tb1t', 'tb2t', 'tg0d', 'tg0h', 'tg0p', 'tl0p', 'th0p', 'th0h', 'th0h', 'th2h', 'tm0p', 'ts0p', 'tn0h', 'tn0d', 'tn0p', 'tp0p', 'f0ac', 'f0mn', 'f0mx', 'f1ac', 'f1mn', 'f1mx', 'f2ac', 'f2mn', 'f2mx', 'msdi', 'alsl', 'fnum', 'fnfd', 'lsof', 'msld', 'spht', 'mssd', 'mssf', 'mstm', 'sght', 'sph0', 'json_info', 'keyboard_language') as $item) {  
+        foreach (array('f0ac', 'f1ac', 'f2ac', 'f3ac', 'f4ac', 'f5ac', 'f6ac', 'f7ac', 'f8ac', 'f0mn', 'f1mn', 'f2mn', 'f3mn', 'f4mn', 'f5mn', 'f6mn', 'f7mn', 'f8mn', 'f0mx', 'f1mx', 'f2mx', 'f3mx', 'f4mx', 'f5mx', 'f6mx', 'f7mx', 'f8mx', 'f0id', 'f1id', 'f2id', 'f3id', 'f4id', 'f5id', 'f6id', 'f7id', 'f8id', 'ta0p', 'tc0f', 'tc0d', 'tc0p', 'tb0t', 'tb1t', 'tb2t', 'tg0d', 'tg0h', 'tg0p', 'tl0p', 'th0p', 'th0h', 'th0h', 'th2h', 'tm0p', 'ts0p', 'tn0h', 'tn0d', 'tn0p', 'tp0p', 'f0ac', 'f0mn', 'f0mx', 'f1ac', 'f1mn', 'f1mx', 'f2ac', 'f2mn', 'f2mx', 'msdi', 'alsl', 'fnum', 'fnfd', 'lsof', 'msld', 'spht', 'mssd', 'mssf', 'mstm', 'sght', 'sph0', 'json_info', 'keyboard_language', 'idle_time') as $item) {  
 
             // If key does not exist in $plist, null it
             if ( ! array_key_exists($item, $plist) || $plist[$item] == "") {
@@ -147,7 +148,7 @@ class Fan_temps_model extends \Model {
                 $this->$item = json_encode($cleaned_json);
 
             // Else if does not start with I, P, T, V, then save the item
-            } else if ((strpos($item, "i") !== 0) && (strpos($item, "p") !== 0) && (strpos($item, "t") !== 0) && (strpos($item, "v") !== 0) ) {
+            } else if ((strpos($item, "i") !== 0) && (strpos($item, "p") !== 0) && (strpos($item, "t") !== 0) && (strpos($item, "v") !== 0) || $item == "idle_time") {
                 $this->$item = $plist[$item];
 
             // Else if greater or equal to than 10, is numeric, and starts with T, then save the item

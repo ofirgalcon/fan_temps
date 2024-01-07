@@ -36,6 +36,9 @@ $(document).on('appReady', function(){
                     if (data[prop] == null){
                        // Do nothing for nulls to blank them
 
+                    } else if ((prop == "keyboard_language" || prop == "idle_time") && data[prop] !== ""){
+                  smc_rows = smc_rows + '<tr><th>'+i18n.t('fan_temps.'+prop)+'</th><td>'+data[prop]+'</td></tr>';
+
                     // Create fan speed table section
                     } else if (prop.startsWith("F") && prop.endsWith("Mn")){
                   fan_rows = fan_rows + '<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;'+i18n.t('fan_temps.fanmin')+'</th><td>'+parseInt(data[prop])+' '+i18n.t('fan_temps.rpm')+'</td></tr>';

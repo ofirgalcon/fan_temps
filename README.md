@@ -53,3 +53,4 @@ Table Schema
 * msdi (boolean) - Optical Disc Inserted
 * json_info (medium text) - JSON string containing SMC keys and values
 * keyboard_language (string) - MacBook keyboard language
+* idle_time (string) - Range of time the device has been idle

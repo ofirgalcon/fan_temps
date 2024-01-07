@@ -13,6 +13,7 @@
                 <th data-i18n="fan_temps.msld_short" data-colname='fan_temps.msld'></th>
                 <th data-i18n="fan_temps.mssd_short" data-colname='fan_temps.mssd'></th>
                 <th data-i18n="fan_temps.keyboard_language" data-colname='fan_temps.keyboard_language'></th>
+                <th data-i18n="fan_temps.idle_time" data-colname='fan_temps.idle_time'></th>
                 <th data-i18n="fan_temps.mstm_short" data-colname='fan_temps.mstm'></th>
                 <th data-i18n="fan_temps.lsof_short" data-colname='fan_temps.lsof'></th>
                 <th data-i18n="fan_temps.spht_short" data-colname='fan_temps.spht'></th>
@@ -22,7 +23,7 @@
             </thead>
             <tbody>
                 <tr>
-                   <td data-i18n="listing.loading" colspan="11" class="dataTables_empty"></td>
+                   <td data-i18n="listing.loading" colspan="12" class="dataTables_empty"></td>
                 </tr>
             </tbody>
           </table>
@@ -144,25 +145,25 @@
                 (columnvar === '-128' ? i18n.t('fan_temps.shutdown_128_short') : columnvar)
                 $('td:eq(4)', nRow).html(columnvar)
 
-                var columnvar=$('td:eq(6)', nRow).html();
+                var columnvar=$('td:eq(7)', nRow).html();
                 columnvar = columnvar == '1' ? i18n.t('enabled') :
                 (columnvar === '0' ? i18n.t('disabled') : '')
-                $('td:eq(6)', nRow).html(columnvar)
-
-                var columnvar=$('td:eq(7)', nRow).html();
-                columnvar = columnvar == '1' ? i18n.t('off') :
-                (columnvar === '0' ? i18n.t('on') : '')
                 $('td:eq(7)', nRow).html(columnvar)
 
                 var columnvar=$('td:eq(8)', nRow).html();
-                columnvar = columnvar == '1' ? i18n.t('yes') :
-                (columnvar === '0' ? i18n.t('no') : '')
+                columnvar = columnvar == '1' ? i18n.t('off') :
+                (columnvar === '0' ? i18n.t('on') : '')
                 $('td:eq(8)', nRow).html(columnvar)
 
-                var columnvar=$('td:eq(10)', nRow).html();
+                var columnvar=$('td:eq(9)', nRow).html();
                 columnvar = columnvar == '1' ? i18n.t('yes') :
                 (columnvar === '0' ? i18n.t('no') : '')
-                $('td:eq(10)', nRow).html(columnvar)
+                $('td:eq(9)', nRow).html(columnvar)
+
+                var columnvar=$('td:eq(11)', nRow).html();
+                columnvar = columnvar == '1' ? i18n.t('yes') :
+                (columnvar === '0' ? i18n.t('no') : '')
+                $('td:eq(11)', nRow).html(columnvar)
             }
         });
     });

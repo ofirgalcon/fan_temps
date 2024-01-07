@@ -12,7 +12,7 @@ import json
 import platform
 
 def get_smc_path():
-    
+
     if getDarwinVersion() < 17:
         # Sierra (Darwin 16) and older use the legacy smc binary
         if os.path.isfile('/usr/local/munki/smc_legacy'):
@@ -29,8 +29,11 @@ def get_smc_path():
 
 def get_smc_results():
 
-    smcinfo_json = {}
-    smcinfo = {"keyboard_language":getKeyboardLanuage(), 'mssd':"-1234"}
+    keyboard_language = getKeyboardLanuage()
+    idle_time = get_idle_time()
+
+    smcinfo_json = {"keyboard_language":keyboard_language, 'idle_time': idle_time}
+    smcinfo = {"keyboard_language":keyboard_language, 'idle_time': idle_time, 'mssd':"-1234"}
 
     # Get SMC keys
     cmd = [get_smc_path(), '-l']
@@ -43,7 +46,7 @@ def get_smc_results():
     model = getMacModel()
     # model = subprocess.check_output(['/usr/sbin/sysctl', '-n','hw.model'], shell=False, bufsize=-1).decode()
 
-    for item in output.decode().split("\n"):
+    for item in output.decode("utf-8", errors="ignore").split("\n"):
 
         # Some key values are offset differently
         if " ]  " in item:
@@ -327,7 +330,7 @@ def get_smc_results():
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (output, unused_error) = proc.communicate()
 
-        output = output.decode().replace(':\n', ':')
+        output = output.decode("utf-8", errors="ignore").replace(':\n', ':')
 
         # Process each line looking for the fan name
         for item in output.split("\n"):
@@ -344,17 +347,17 @@ def get_smc_results():
                 smcinfo_json['F3ID'] = item.split(':')[2].strip()
                 smcinfo['f3id'] = item.split(':')[2].strip()
             elif "Fan #4" in item and "Fan ID" in item:
-                smcinfo_json['F4ID'] = item.split(':')[2].strip()            
-                smcinfo['f4id'] = item.split(':')[2].strip()            
+                smcinfo_json['F4ID'] = item.split(':')[2].strip()
+                smcinfo['f4id'] = item.split(':')[2].strip()
             elif "Fan #5" in item and "Fan ID" in item:
-                smcinfo_json['F5ID'] = item.split(':')[2].strip()            
-                smcinfo['f5id'] = item.split(':')[2].strip()            
+                smcinfo_json['F5ID'] = item.split(':')[2].strip()
+                smcinfo['f5id'] = item.split(':')[2].strip()
             elif "Fan #6" in item and "Fan ID" in item:
-                smcinfo_json['F6ID'] = item.split(':')[2].strip()          
-                smcinfo['f6id'] = item.split(':')[2].strip()          
+                smcinfo_json['F6ID'] = item.split(':')[2].strip()
+                smcinfo['f6id'] = item.split(':')[2].strip()
             elif "Fan #7" in item and "Fan ID" in item:
-                smcinfo_json['F7ID'] = item.split(':')[2].strip()           
-                smcinfo['f7id'] = item.split(':')[2].strip()           
+                smcinfo_json['F7ID'] = item.split(':')[2].strip()
+                smcinfo['f7id'] = item.split(':')[2].strip()
             elif "Fan #8" in item and "Fan ID" in item:
                 smcinfo_json['F8ID'] = item.split(':')[2].strip()
                 smcinfo['f8id'] = item.split(':')[2].strip()
@@ -417,7 +420,7 @@ def get_as_properties(result):
     try:
         # Because there can be multiple displays, we need to find the primary display
         if plist["CBDisplayInfo"] and plist["CBDisplayInfo"][0] and plist["CBDisplayInfo"][0]["CBDisplayInfoDeviceID"]:
-            main_display=plist["CBDisplayInfo"][0]["CBDisplayInfoDeviceID"]
+            main_display = plist["CBDisplayInfo"][0]["CBDisplayInfoDeviceID"]
 
             if plist["CBDisplays"]:
                 for display in plist["CBDisplays"]:
@@ -459,6 +462,46 @@ def get_as_properties(result):
         pass
 
     return result
+
+def get_idle_time():
+
+    # Returns the range of time the Mac has been idle
+    # We do not return the raw seconds because that is a bit too
+    # invasive when it comes to user privacy.
+
+    try:
+        cmd = ['/usr/sbin/ioreg', '-c', 'IOHIDSystem', '-d4']
+        proc = subprocess.Popen(cmd, shell=False, bufsize=-1, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (output, unused_error) = proc.communicate()
+
+        idle_time = 0
+        for line in output.decode("utf-8", errors="ignore").split("\n"):
+            if 'HIDIdleTime' in line:
+                idle_time = (int(re.sub("[^0-9]", "", line))/1000000000)
+                break
+    except:
+        return ""
+
+    if idle_time > 31536000:
+        return "More than 1 Year"
+    elif idle_time > 15780000:
+        return "More than 6 Months"
+    elif idle_time > 2592000:
+        return "More than 1 Month"
+    elif idle_time > 604800:
+        return "More than 1 week"
+    elif idle_time > 86400:
+        return "More than 1 day"
+    elif idle_time > 3600:
+        return "More than 1 hour"
+    elif idle_time > 1200:
+        return "More than 20 minutes"
+    elif idle_time < 1199:
+        return "Less than 20 minutes"
+    elif idle_time == 0:
+        return ""
+
+    return ""
 
 def to_bool(s):
     if s == True:

@@ -59,7 +59,7 @@ class Fan_temps_controller extends Module_controller
                         LEFT JOIN reportdata USING (serial_number)
                         WHERE
                         ".get_machine_group_filter('');
-        
+
         $obj = new View();  
         $queryobj = new Fan_temps_model();
         $obj->view('json', array('msg' => current($queryobj->query($sql))));
@@ -80,7 +80,7 @@ class Fan_temps_controller extends Module_controller
                         LEFT JOIN reportdata USING (serial_number)
                         WHERE
                         ".get_machine_group_filter('');
-        
+
         $obj = new View();  
         $queryobj = new Fan_temps_model();
         $obj->view('json', array('msg' => current($queryobj->query($sql))));
@@ -101,7 +101,7 @@ class Fan_temps_controller extends Module_controller
                         LEFT JOIN reportdata USING (serial_number)
                         WHERE
                         ".get_machine_group_filter('');
-        
+
         $obj = new View();  
         $queryobj = new Fan_temps_model();
         $obj->view('json', array('msg' => current($queryobj->query($sql))));
@@ -122,7 +122,7 @@ class Fan_temps_controller extends Module_controller
                         LEFT JOIN reportdata USING (serial_number)
                         WHERE
                         ".get_machine_group_filter('');
-        
+
         $obj = new View();  
         $queryobj = new Fan_temps_model();
         $obj->view('json', array('msg' => current($queryobj->query($sql))));
@@ -138,13 +138,13 @@ class Fan_temps_controller extends Module_controller
     {
         // Remove serial number characters
         $serial_number = preg_replace("/[^A-Za-z0-9_\-]]/", '', $serial_number);
-        
+
         $sql = "SELECT json_info FROM fan_temps WHERE serial_number = '$serial_number'";
-        
+
         $obj = new View();
         $queryobj = new Fan_temps_model();
         $fan_temps_tab = $queryobj->query($sql);
-        
+
         // Extract just the JSON string and make it an object
         if (array_key_exists(0, $fan_temps_tab) && !is_null($fan_temps_tab[0]->json_info)){
             $data_json = json_decode(json_decode(json_encode($fan_temps_tab[0]),true)['json_info']);
