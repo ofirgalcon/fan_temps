@@ -143,8 +143,10 @@ $(document).on('appReady', function(){
                 } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "6"){
                   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown6')+'</td></tr>';
 
-                    } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "5"){
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "5"){
                   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown5')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "4"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown4')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "3"){
                   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown3')+'</td></tr>';
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "2"){
