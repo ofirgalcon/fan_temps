@@ -1,4 +1,10 @@
 <div id="amps"></div>
+
+<!-- <div id="lister" style="font-size: large; float: right;">
+    <a href="/show/listing/fan_temps/fan_temps" title="List">
+        <i class="btn btn-default tab-btn fa fa-list"></i>
+    </a>
+</div> -->
 <h2 data-i18n="fan_temps.tabtitle_amps"></h2>
 
 <div id="apms-msg" data-i18n="listing.loading" class="col-lg-12 text-center"></div>
@@ -121,6 +127,21 @@ $(document).on('appReady', function(){
                   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('enabled')+'</td></tr>';
                     } else if (prop == "HDBS" && parseInt(data[prop]) == "0"){
                   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+i18n.t('disabled')+'</td></tr>';
+                
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "12"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown12')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "11"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown11')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "10"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown10')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "9"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown9')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "8"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown8')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "7"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown7')+'</td></tr>';
+                } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "6"){
+                  smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown6')+'</td></tr>';
 
                     } else if ((prop == "MSSD" || prop == "MSSP") && data[prop] == "5"){
                   smc_rows = smc_rows + '<tr><th><span title="'+i18n.t('fan_temps.sensorname')+": "+prop+'">'+i18n.t('fan_temps.'+local_prop)+'</span></th><td>'+data[prop]+' - '+i18n.t('fan_temps.shutdown5')+'</td></tr>';
